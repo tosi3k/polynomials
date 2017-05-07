@@ -774,7 +774,6 @@ bool MulTest()
         PolyDestroy(&p2);
         PolyDestroy(&p_res1);
         PolyDestroy(&p1);
-        PolyDestroy(&p2);
     }
     {
         poly_coeff_t val1[] = {1, 1};
@@ -1515,33 +1514,38 @@ bool SimpleAddTest()
     return res;
 }
 
+static inline Mono M(Poly p, poly_exp_t e)
+{
+    return MonoFromPoly(&p, e);
+}
+
 bool SimpleAddMonosTest()
 {
     bool res = true;
     {
-        Mono m[] = { { C(-1), 0 }, { C(1), 0 } };
+        Mono m[] = { M(C(-1), 0), M(C(1), 0) };
         res &= TestAddMonos(2, m, C(0));
     }
     {
-        Mono m[] = { { C(-1), 1 }, { C(1), 1 } };
+        Mono m[] = { M(C(-1), 1), M(C(1), 1) };
         res &= TestAddMonos(2, m, C(0));
     }
     {
-        Mono m[] = { { C(1), 0 }, { C(1), 0 } };
+        Mono m[] = { M(C(1), 0), M(C(1), 0) };
         res &= TestAddMonos(2, m, C(2));
     }
     {
-        Mono m[] = { { C(1), 1 }, { C(1), 1 } };
+        Mono m[] = { M(C(1), 1), M(C(1), 1) };
         res &= TestAddMonos(2, m, P(C(2), 1));
     }
     {
-        Mono m[] = { { P(C(-1), 1), 0 }, { P(C(1), 1), 0 } };
+        Mono m[] = { M(P(C(-1), 1), 0), M(P(C(1), 1), 0) };
         res &= TestAddMonos(2, m, C(0));
     }
     {
-        Mono m[] = { { P(C(-1), 0), 1 }, { P(C(1), 0), 1 },
-                     { C(2), 0 }, { C(1), 1 },
-                     { P(C(2), 1), 2 }, { P(C(2), 2), 2 } };
+        Mono m[] = { M(P(C(-1), 0), 1), M(P(C(1), 0), 1),
+                     M(C(2), 0), M(C(1), 1),
+                     M(P(C(2), 1), 2), M(P(C(2), 2), 2) };
         res &= TestAddMonos(6, m, P(C(2), 0, C(1), 1, P(C(2), 1, C(2), 2), 2));
     }
     return res;
