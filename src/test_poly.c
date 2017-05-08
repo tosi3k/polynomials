@@ -368,6 +368,7 @@ bool LongPolynomialTest()
             fprintf(stderr, "[LongPolynomialTest] fail on PolyAt [2]\n");
             res = false;
         }
+        PolyDestroy(&mono_sum_poly);
         PolyDestroy(&mono_sum);
         mono_sum = PolyAt(&long_p, -1);
         if (!PolyIsEq(&mono_sum, &p))
@@ -486,7 +487,7 @@ bool DegreeOpChangeTest()
         PolyDestroy(&p3);
         PolyDestroy(&p_res);
     }
-
+    PolyDestroy(&p_one);
     return true;
 }
 
@@ -622,6 +623,7 @@ Poly MakePoly(unsigned count, const poly_coeff_t *val, poly_exp_t *exp)
         if (val[i] == 0)
         {
             shift--;
+            PolyDestroy(&p);
         }
         else
         {
@@ -855,6 +857,7 @@ Poly BuildRecursivePoly(const poly_coeff_t * coef_arr, const poly_exp_t * exp_ar
         if (PolyIsZero(&res))
         {
             Mono m = MonoFromPoly(&p, exp);
+            PolyDestroy(&res);
             res = PolyAddMonos(1, &m);
         }
         else
@@ -1125,9 +1128,10 @@ bool MulTest2()
 {
     bool good = true;
     size_t step = 10;
-    size_t poly_one_len = 10;
+    size_t poly_one_len = 5;
     size_t poly_two_len;
-    size_t current_conf_size = conf_size / 100 + 1;
+    size_t current_conf_size = 501; // conf_size+1; - dla ambitnych: wzorcowe
+    // rozwiązanie w trybe relase na studentsie wykonuje się w 1m44.373s (real) 
     poly_exp_t *exp_list = calloc(2 * current_conf_size, sizeof(poly_exp_t));
     for (poly_exp_t i = 0; i < (poly_exp_t)current_conf_size * 2; i++)
     {
@@ -1675,10 +1679,11 @@ bool OverflowTest()
 
 void MemoryTest()
 {
-    Poly * p = malloc(sizeof(struct Poly));
+    Poly *p = malloc(sizeof(struct Poly));
     *p = PolyFromCoeff(5);
     Mono m = MonoFromPoly(p, 4);
     *p = PolyFromCoeff(3);
+    PolyDestroy(p);
     free(p); // To nie jest Destroy, to tylko zwalnia malloca
     Poly p2 = PolyAddMonos(1, &m);
     Poly p3 = PolyAt(&p2, 2);
