@@ -13,7 +13,7 @@
  * Wywłaszcza program w przypadku niepowodzenia alokacji pamięci przydzielonej wskaźnikowi @p ptr.
  * @param[in] ptr : wskaźnik, który powinien być różny od NULL;
  */
-static inline void checkAllocation(const void* ptr) {
+static inline void checkAllocation(const void *ptr) {
     assert(ptr != NULL);
 }
 
@@ -28,7 +28,6 @@ void PolyDestroy(Poly *p) {
 
 Poly PolyClone(const Poly *p) {
     Poly res = (Poly) {.monos = NULL, .size = p->size, .coeff = p->coeff};
-    
     if (!PolyIsCoeff(p)) {
         res.monos = malloc(sizeof(Mono) * p->size);
         checkAllocation(res.monos);
@@ -146,7 +145,7 @@ Poly PolyAdd(const Poly *p, const Poly *q) {
         } else {
             Poly result;
             if (q->monos[0].p.coeff == -p->coeff) {
-                Mono* newMonos = malloc(sizeof(Mono) * (q->size - 1));
+                Mono *newMonos = malloc(sizeof(Mono) * (q->size - 1));
                 checkAllocation(newMonos);
                 for (unsigned j = 0; j < q->size - 1; ++j) {
                     newMonos[j] = MonoClone(&q->monos[j + 1]);
@@ -163,7 +162,7 @@ Poly PolyAdd(const Poly *p, const Poly *q) {
     }
     else {
         unsigned i = 0, j = 0, newSize = 0;
-        Mono* monosPlaceholder = malloc(sizeof(Mono) * (p->size + q->size));
+        Mono *monosPlaceholder = malloc(sizeof(Mono) * (p->size + q->size));
         checkAllocation(monosPlaceholder);
         while (i < p->size || j < q->size) {
             if (i < p->size && j < q->size) {
@@ -249,7 +248,7 @@ static poly_coeff_t CoeffPower(poly_coeff_t coeff, poly_exp_t exp) {
  * @param[in,out] p : wielomian
  * @param[in] mult : skalar
  */
-static void PolyScalarMul(Poly* p, poly_coeff_t mult) {
+static void PolyScalarMul(Poly *p, poly_coeff_t mult) {
     if (PolyIsCoeff(p)) {
         p->coeff *= mult;
         return;
@@ -265,7 +264,7 @@ static void PolyScalarMul(Poly* p, poly_coeff_t mult) {
             p->monos = NULL;
             p->coeff = 0;
         } else {
-            Mono* newMonos = malloc(sizeof(Mono) * newSize);
+            Mono *newMonos = malloc(sizeof(Mono) * newSize);
             checkAllocation(newMonos);
             unsigned counter = 0;
             for (unsigned j = 0; j < p->size; ++j) {
@@ -306,7 +305,7 @@ Poly PolyAt(const Poly *p, poly_coeff_t x) {
  * @param[in] b : jednomian
  * @return czy wykładnik jednomianu @p a jest większy od wykładnika jednomianu @p b?
  */
-static inline int MonoComparator(const void* a, const void* b) {
+static inline int MonoComparator(const void *a, const void *b) {
     return (((Mono*)a)->exp > ((Mono*)b)->exp) ? 1 : 0;
 }
 
@@ -358,7 +357,7 @@ Poly PolyAddMonos(unsigned count, const Mono monos[]) {
     if (!count) {
         return PolyFromCoeff(0);
     } else {
-        Mono* monosCopy = malloc(sizeof(Mono) * count);
+        Mono *monosCopy = malloc(sizeof(Mono) * count);
         checkAllocation(monosCopy);
         for (unsigned j = 0; j < count; ++j) {
             monosCopy[j] = monos[j];
@@ -373,11 +372,9 @@ Poly PolyAddMonos(unsigned count, const Mono monos[]) {
         unsigned newSize = 0;
         Poly summand = PolyFromCoeff(0);
         
-        Mono* monosPlaceholder = malloc(sizeof(Mono) * count);
+        Mono *monosPlaceholder = malloc(sizeof(Mono) * count);
         checkAllocation(monosPlaceholder);
-        
-        Poly addConst = PolyFromCoeff(0);
-        
+
         for (unsigned j = 0; j < count; ++j) {
             if (lastExp != monosCopy[j].exp) {
                 if (!PolyIsZero(&summand)) {
@@ -402,7 +399,7 @@ Poly PolyAddMonos(unsigned count, const Mono monos[]) {
         if (!newSize) {
             result = PolyFromCoeff(0);
         } else {
-            Mono* properMonos = malloc(sizeof(Mono) * newSize);
+            Mono *properMonos = malloc(sizeof(Mono) * newSize);
             checkAllocation(properMonos);
             for (unsigned j = 0; j < newSize; ++j) {
                 properMonos[j] = monosPlaceholder[j];
@@ -433,7 +430,7 @@ Poly PolyMul(const Poly *p, const Poly *q) {
     } else if (PolyIsCoeff(q)) {
         return PolyMul(q, p);
     } else {
-        Mono* monos = malloc(sizeof(Mono) * p->size * q->size);
+        Mono *monos = malloc(sizeof(Mono) * p->size * q->size);
         checkAllocation(monos);
         for (unsigned i = 0; i < p->size; ++i) {
             for (unsigned j = 0; j < q->size; ++j) {
