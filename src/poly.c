@@ -248,9 +248,7 @@ Poly PolyAdd(const Poly *p, const Poly *q) {
 
         free(monosPlaceholder);
 
-        Poly result = (Poly) {.monos = properMonos, .size = newSize, .coeff = 0};
-
-        return result;
+        return (Poly) {.monos = properMonos, .size = newSize, .coeff = 0};
     }
 }
 
