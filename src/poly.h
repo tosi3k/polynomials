@@ -104,7 +104,7 @@ void PolyDestroy(Poly *p);
  * @param[in] m : jednomian
  */
 static inline void MonoDestroy(Mono *m) {
-    PolyDestroy(&(m->p));
+    PolyDestroy(&m->p);
 }
 
 /**
