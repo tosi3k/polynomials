@@ -3,7 +3,7 @@
 
    @author Antoni Zawodny <az337756@students.mimuw.edu.pl>
    @copyright Uniwersytet Warszawski
-   @date 2017-05-09
+   @date 2017-05-13
 */
 
 #ifndef __POLY_H__
@@ -22,21 +22,22 @@ typedef int poly_exp_t;
 typedef struct Mono Mono;
 
 /**
- * Struktura przechowująca wielomian
+ * Struktura przechowująca wielomian.
  * Wielomian może zależeć od jakichś zmiennych lub być współczynnikiem.
  * Jeśli wielomian nie jest współczynnikiem, to jest sumą jednomianów
- * zawartych w tablicy `monos` o rozmiarze `size`.
+ * zawartych w tablicy `monos` o rozmiarze `size` posortowanych niemalejąco
+ * według stopni. Wówczas wartość pola `coeff` jest nieistotna.
  * Jeśli zaś wielomian jest współczynnikiem, to `monos == NULL`, a pole
  * `coeff` oznacza wartość współczynnika z którym mamy do czynienia.
  */
 typedef struct Poly {
-    Mono* monos; ///< tablica jednomianów posortowanych po stopniu
+    Mono *monos; ///< tablica jednomianów
     unsigned size; ///< rozmiar tablicy jednomianów
-    poly_coeff_t coeff; ///< współczynnik (jeśli wielomian jest stały)
+    poly_coeff_t coeff; ///< współczynnik
 } Poly;
 
 /**
-  * Struktura przechowująca jednomian
+  * Struktura przechowująca jednomian.
   * Jednomian ma postać `p * x^e`.
   * Współczynnik `p` może też być wielomianem.
   * Będzie on traktowany jako wielomian nad kolejną zmienną (nie nad x).
