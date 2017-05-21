@@ -8,6 +8,7 @@
 
 #include "polystack.h"
 #include <stdio.h>
+#include <assert.h>
 
 typedef struct Node Node;
 
@@ -41,6 +42,7 @@ void StackInit() {
 
 void StackPush(Poly p) {
     Node *n = malloc(sizeof(Node));
+    assert(n != NULL);
     n->p = p;
     n->next = s.head;
 
@@ -188,6 +190,7 @@ void PolyPrint(const Poly *p) {
                 Poly tmp = PolySub(&toPrint, &subtrahend);
                 Poly coeffWrapper = (Poly) {.monos = malloc(sizeof(Mono)), .size = 1,
                         .coeff = 0};
+                assert(coeffWrapper.monos != NULL);
                 Mono m = MonoFromPoly(&subtrahend, 0);
                 m.exp = 0;
                 coeffWrapper.monos[0] = m;

@@ -48,10 +48,13 @@ inline bool VectorIsEmpty(const Vector *v) {
 void VectorAddMono(Vector *v, Mono m) {
     if (VectorIsEmpty(v)) {
         v->monos = malloc(sizeof(Mono));
+        assert(v->monos != NULL);
+
         v->monos[0] = m;
     } else if (v->size == v->maxSize) {
         v->maxSize *= 2;
         Mono *newMonos = malloc(sizeof(Mono) * v->maxSize);
+        assert(newMonos != NULL);
 
         for (unsigned j = 0; j < v->size; ++j) {
             newMonos[j] = v->monos[j];
