@@ -3,11 +3,12 @@
 
    @author Antoni Zawodny <az337756@students.mimuw.edu.pl>
    @copyright Uniwersytet Warszawski
-   @date 2017-05-13
+   @date 2017-05-22
 */
 
 #include <assert.h>
 #include "poly.h"
+#include <stdio.h>
 
 /**
  * Wywłaszcza program w przypadku niepowodzenia alokacji pamięci przydzielonej

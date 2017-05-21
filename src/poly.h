@@ -3,7 +3,7 @@
 
    @author Antoni Zawodny <az337756@students.mimuw.edu.pl>
    @copyright Uniwersytet Warszawski
-   @date 2017-05-13
+   @date 2017-05-22
 */
 
 #ifndef __POLY_H__
