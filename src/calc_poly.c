@@ -8,6 +8,10 @@
 
 #include "parser.h"
 
+/**
+ * Funkcja główna programu.
+ * @return kod wyjścia programu
+ */
 int main() {
     Parse();
 
