@@ -205,8 +205,19 @@ void PrintPolyError() {
  * wartość wielomianu?
  */
 bool IsCoeffParsed() {
+    /**
+     * Najmniejszy możliwy współczynnik.
+     */
     static const char *MINCOEFF = "-9223372036854775808";
+
+    /**
+     * Największy możliwy współczynnik.
+     */
     static const char *MAXCOEFF = "9223372036854775807";
+
+    /**
+     * Rozmiar tablicy `MINCOEFF`.
+     */
     static const int MINCOEFF_SIZE = 21;
 
     char number[21] = "xxxxxxxxxxxxxxxxxxxx";
@@ -269,8 +280,19 @@ bool IsCoeffParsed() {
  * wartość wielomianu?
  */
 bool IsIntParsed(bool isUnsigned) {
+    /**
+     * Największy możliwy wykładnik.
+     */
     static const char *MAXEXP = "2147483647";
+
+    /**
+     * Największy możliwy indeks zmiennej.
+     */
     static const char *MAXIDX = "4294967295";
+
+    /**
+     * Rozmiar tablicy `MAXEXP` i `MAXIDX`.
+     */
     static const int MAXINT_SIZE = 11;
 
     char number[11] = "xxxxxxxxxx";
