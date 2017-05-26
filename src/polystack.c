@@ -162,7 +162,7 @@ void StackAt(poly_coeff_t x) {
 
 /**
  * Wypisuje rekurencyjnie wielomian @p p.
- * @param p : wielomian
+ * @param[in] p : wielomian
  */
 void PolyPrint(const Poly *p);
 
