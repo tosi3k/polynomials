@@ -127,7 +127,9 @@ void StackAt(poly_coeff_t x);
 void StackPrint();
 
 /**
- * TODO
+ * Bierze wielomian `p` z wierzchołka stosu, następnie ściąga `count`
+ * wielomianów (`x[0], x[1], ..., x[count - 1]`) ze stosu i kładzie na stos
+ * wielomian `PolyCompose(p, count, x)`.
  * @param[in] count :
  */
 void StackCompose(unsigned count);
