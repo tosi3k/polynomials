@@ -6,9 +6,12 @@
    @date 2017-05-22
 */
 
-#include "polystack.h"
 #include <stdio.h>
 #include <assert.h>
+#include <stdlib.h>
+
+#include "polystack.h"
+#include "utils.h"
 
 typedef struct Node Node;
 
@@ -222,4 +225,29 @@ void StackPrint() {
         PolyPrint(&p);
         printf("\n");
     }
+}
+
+void StackCompose(unsigned count) {
+    Poly p = StackPop();
+
+    if (!count) {
+        Poly tmp = PolyCompose(&p, 0, NULL);
+        StackPush(tmp);
+    } else {
+        Poly *x = malloc(count * sizeof(Poly));
+
+        for (unsigned j = 0; j < count; ++j) {
+            x[j] = StackPop();
+        }
+
+        Poly tmp = PolyCompose(&p, count, x);
+        StackPush(tmp);
+
+        for (unsigned j = 0; j < count; ++j) {
+            PolyDestroy(&x[j]);
+        }
+        free(x);
+    }
+
+    PolyDestroy(&p);
 }

@@ -7,8 +7,10 @@
 */
 
 #include <assert.h>
-#include "poly.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include "poly.h"
+#include "utils.h"
 
 /**
  * Wywłaszcza program w przypadku niepowodzenia alokacji pamięci przydzielonej
@@ -16,6 +18,7 @@
  * @param[in] ptr : wskaźnik, który powinien być różny od NULL;
  */
 static inline void CheckAllocation(const void *ptr) {
+    (void)ptr;
     assert(ptr != NULL);
 }
 
@@ -502,4 +505,83 @@ Poly PolyMul(const Poly *p, const Poly *q) {
 
         return result;
     }
+}
+
+/**
+ * Zwraca wielomian @p p podniesiony do potęgi @p exp.
+ * @param[in] p : wielomian
+ * @param[in] exp : wykładnik
+ * @return `p^{exp}`
+ */
+Poly PolyPow(const Poly *p, unsigned exp) {
+    Poly result = PolyFromCoeff(1);
+    Poly coeff = PolyClone(p);
+
+    while (exp) {
+        if (exp & 1) {
+            Poly tmp = PolyMul(&result, &coeff);
+            PolyDestroy(&result);
+            result = tmp;
+        }
+
+        exp >>= 1;
+        Poly tmp = PolyMul(&coeff, &coeff);
+        PolyDestroy(&coeff);
+        coeff = tmp;
+    }
+
+    PolyDestroy(&coeff);
+
+    return result;
+}
+
+/**
+ * Podstawia wielomiany `x[start], ..., x[stop - 1]` pod zmienne wielomianu @p p.
+ * @param[in] p : wielomian
+ * @param[in] start : początkowy indeks @p x
+ * @param[in] stop : końcowy indeks @p x
+ * @param[in] x : tablica wielomianów
+ * @return `p(x[start], x[start + 1], ..., x[stop - 1], 0, 0, ...)`
+ */
+Poly PolyComposeRec(const Poly *p, unsigned start, unsigned stop, const Poly x[]) {
+    if (start == stop) {
+        return PolyAt(p, 0);
+    } else if (PolyIsCoeff(p)) {
+        return *p;
+    } else {
+        unsigned exp = (p->monos[0].exp == -1) ? 0 : (unsigned)p->monos[0].exp;
+        Poly factor = PolyPow(&x[start], exp);
+        Poly rec = PolyComposeRec(&p->monos[0].p, start + 1, stop, x);
+
+        Poly res = PolyMul(&factor, &rec);
+
+        PolyDestroy(&rec);
+
+        for (size_t j = 1; j < p->size; ++j) {
+            Poly toMul = PolyPow(&x[start], p->monos[j].exp - exp);
+            Poly tmp = PolyMul(&factor, &toMul);
+            PolyDestroy(&factor);
+            PolyDestroy(&toMul);
+            factor = tmp;
+
+            rec = PolyComposeRec(&p->monos[j].p, start + 1, stop, x);
+            tmp = PolyMul(&factor, &rec);
+            PolyDestroy(&rec);
+            rec = tmp;
+
+            tmp = PolyAdd(&res, &rec);
+            PolyDestroy(&res);
+            PolyDestroy(&rec);
+            res = tmp;
+
+            exp = (unsigned)p->monos[j].exp;
+        }
+
+        PolyDestroy(&factor);
+        return res;
+    }
+}
+
+Poly PolyCompose(const Poly *p, unsigned count, const Poly x[]) {
+    return PolyComposeRec(p, 0, count, x);
 }

@@ -126,4 +126,10 @@ void StackAt(poly_coeff_t x);
  */
 void StackPrint();
 
+/**
+ * TODO
+ * @param[in] count :
+ */
+void StackCompose(unsigned count);
+
 #endif /* __POLYSTACK_H__ */

@@ -7,8 +7,10 @@
 */
 
 #include <assert.h>
-#include <stdio.h>
+#include <stdlib.h>
+
 #include "poly.h"
+#include "utils.h"
 
 /**
  * Definicja wektora jednomianów.
@@ -35,7 +37,7 @@ Vector VectorCreate() {
  * @param[in] v : wektor
  * @return czy wektor @p v jest pusty?
  */
-inline bool VectorIsEmpty(const Vector *v) {
+static inline bool VectorIsEmpty(const Vector *v) {
     return (v->size == 0);
 }
 

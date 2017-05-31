@@ -6,13 +6,16 @@
    @date 2017-05-22
 */
 
-#include "parser.h"
-#include "polystack.h"
-#include "vector.h"
 #include <string.h>
 #include <stdio.h>
 #include <assert.h>
 #include <ctype.h>
+#include <stdlib.h>
+
+#include "parser.h"
+#include "polystack.h"
+#include "vector.h"
+#include "utils.h"
 
 /**
  * Obecny wiersz wejścia.
@@ -77,7 +80,7 @@ void GetChar() {
  * Sprawdza czy obecna litera jest cyfrą.
  * @return czy obecna litera jest cyfrą?
  */
-inline bool IsDigit() {
+static inline bool IsDigit() {
     return ('0' <= __lastChar && __lastChar <= '9');
 }
 
@@ -85,7 +88,7 @@ inline bool IsDigit() {
  * Sprawdza czy obecna litera jest minusem.
  * @return czy obecna litera jest minusem?
  */
-inline bool IsMinus() {
+static inline bool IsMinus() {
     return (__lastChar == '-');
 }
 
@@ -93,7 +96,7 @@ inline bool IsMinus() {
  * Sprawdza czy obecna litera jest plusem.
  * @return czy obecna litera jest plusem?
  */
-inline bool IsPlus() {
+static inline bool IsPlus() {
     return (__lastChar == '+');
 }
 
@@ -101,7 +104,7 @@ inline bool IsPlus() {
  * Sprawdza czy obecna litera jest nawiasem otwierającym.
  * @return czy obecna litera jest nawiasem otwierającym?
  */
-inline bool IsLeftBracket() {
+static inline bool IsLeftBracket() {
     return (__lastChar == '(');
 }
 
@@ -109,7 +112,7 @@ inline bool IsLeftBracket() {
  * Sprawdza czy obecna litera jest nawiasem zamykającym.
  * @return czy obecna litera jest nawiasem zamykającym?
  */
-inline bool IsRightBracket() {
+static inline bool IsRightBracket() {
     return (__lastChar == ')');
 }
 
@@ -117,7 +120,7 @@ inline bool IsRightBracket() {
  * Sprawdza czy obecna litera jest przecinkiem.
  * @return czy obecna litera jest przecinkiem?
  */
-inline bool IsComma() {
+static inline bool IsComma() {
     return (__lastChar == ',');
 }
 
@@ -125,7 +128,7 @@ inline bool IsComma() {
  * Sprawdza czy obecna litera jest zerem.
  * @return czy obecna litera jest zerem?
  */
-inline bool IsZero() {
+static inline bool IsZero() {
     return (__lastChar == '0');
 }
 
@@ -133,7 +136,7 @@ inline bool IsZero() {
  * Sprawdza czy doszliśmy do końca standardowego wejścia.
  * @return czy wczytaliśmy już wszystkie znaki?
  */
-bool IsEOF() {
+static inline bool IsEOF() {
     return (__lastChar == EOF);
 }
 
@@ -141,7 +144,7 @@ bool IsEOF() {
  * Sprawdza, czy parser jest obecnie na końcu linii.
  * @return czy parser jest na końcu linii?
  */
-bool IsLineFinished() {
+static inline bool IsLineFinished() {
     return (__lastChar == '\n' || IsEOF());
 }
 
@@ -158,7 +161,7 @@ void ReadUntilEndline() {
  * Rodzaj błędu przy parsowaniu komendy.
  */
 typedef enum CommandErrorType {STACK_UNDERFLOW, WRONG_COMMAND, WRONG_VALUE,
-    WRONG_VARIABLE} CommandErrorType;
+    WRONG_VARIABLE, WRONG_COUNT} CommandErrorType;
 
 /**
  * Wypisuje odpowiednią informację na temat błędu @p e i przechodzi do końca
@@ -179,8 +182,8 @@ void PrintCommandError(CommandErrorType e) {
         case WRONG_VARIABLE:
             fprintf(stderr, "ERROR %u WRONG VARIABLE\n", __row);
             break;
-        default:
-            break;
+        case WRONG_COUNT:
+            fprintf(stderr, "ERROR %u WRONG COUNT\n", __row);
     }
 
     ReadUntilEndline();
@@ -374,19 +377,19 @@ bool IsExpParsed() {
  */
 const char *COMMANDS[] = {"ZERO", "IS_COEFF", "IS_ZERO", "CLONE", "ADD", "MUL",
                           "NEG", "SUB", "IS_EQ", "DEG", "DEG_BY ", "AT ",
-                          "PRINT", "POP"};
+                          "PRINT", "POP", "COMPOSE "};
 
 /**
  * Pozycje komend w tablicy `COMMANDS`.
  */
 enum ComPos {ZERO_POS, IS_COEFF_POS, IS_ZERO_POS, CLONE_POS, ADD_POS, MUL_POS,
     NEG_POS, SUB_POS, IS_EQ_POS, DEG_POS, DEG_BY_POS, AT_POS,
-    PRINT_POS, POP_POS};
+    PRINT_POS, POP_POS, COMPOSE_POS};
 
 /**
  * Liczba komend akceptowana przez parser.
  */
-const unsigned COMMANDS_SIZE = 14;
+const unsigned COMMANDS_SIZE = 15;
 
 /**
  * Sprawdza czy @p s ma szansę być komendą.
@@ -427,7 +430,7 @@ unsigned CommandPos(const char *s, size_t size) {
  * kalkulatora.
  */
 void ParseCommand() {
-    char com[9] = "xxxxxxxx";
+    char com[10] = "xxxxxxxx";
     com[0] = __lastChar;
     unsigned charCount = 1;
 
@@ -500,6 +503,19 @@ void ParseCommand() {
                     }
                 } else {
                     PrintCommandError(WRONG_VALUE);
+                }
+                break;
+            case COMPOSE_POS:
+                if (IsIdxParsed()) {
+                    if (!IsLineFinished()) {
+                        PrintCommandError(WRONG_COUNT);
+                    } else if (StackSize() <= __idx) {
+                        PrintCommandError(STACK_UNDERFLOW);
+                    } else {
+                        StackCompose(__idx);
+                    }
+                } else {
+                    PrintCommandError(WRONG_COUNT);
                 }
                 break;
             default:

@@ -9,7 +9,6 @@
 #ifndef __POLY_H__
 #define __POLY_H__
 
-#include <stdlib.h>
 #include <stdbool.h>
 #include <stddef.h>
 
@@ -203,5 +202,14 @@ bool PolyIsEq(const Poly *p, const Poly *q);
  * @return @f$p(x, x_0, x_1, \ldots)@f$
  */
 Poly PolyAt(const Poly *p, poly_coeff_t x);
+
+/**
+ * Podstawia wielomiany `x[0], ..., x[count - 1]` pod zmienne wielomianu @p p.
+ * @param[in] p : wielomian
+ * @param[in] count : rozmiar tablicy @p x
+ * @param[in] x : tablica wielomianów
+ * @return `p(x[0], x[1], ..., x[count - 1], 0, 0, ...)`
+ */
+Poly PolyCompose(const Poly *p, unsigned count, const Poly x[]);
 
 #endif /* __POLY_H__ */

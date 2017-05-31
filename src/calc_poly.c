@@ -7,6 +7,7 @@
 */
 
 #include "parser.h"
+#include "utils.h"
 
 /**
  * Funkcja główna programu.
@@ -14,6 +15,5 @@
  */
 int main() {
     Parse();
-
     return 0;
 }
