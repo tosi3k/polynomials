@@ -235,6 +235,7 @@ void StackCompose(unsigned count) {
         StackPush(tmp);
     } else {
         Poly *x = malloc(count * sizeof(Poly));
+        assert(x != NULL);
 
         for (unsigned j = 0; j < count; ++j) {
             x[j] = StackPop();
